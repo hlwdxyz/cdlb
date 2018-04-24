@@ -1,0 +1,597 @@
+1 a) C / C++ program to accept a C program ,Check for un-terminated string constant in the input C program. i.e A string constant
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+int main(){
+
+	FILE *fp;
+	int lineno=0,string=0,open=0,close=0,i,strcheck=0;
+	char line[100];
+	fp=fopen("file.txt","r");
+	if(fp==NULL)
+	{
+		printf("Couldn't open file ");
+		return 1;//exit(0);
+	}
+	printf("File opened correctly");
+	while(fgets(line,strlen(line),fp)!=NULL){
+		open=close=0;
+		string=0;
+		strcheck=0;
+		lineno++;
+		for(i=0;i<sizeof(line);i++){
+			if(line[i]=='"'){
+				string=1;
+				if(open==1 && close==0) close=1;
+				else if(open==0 && close==0) open=1;
+				else if(open==1 && close==1) close=0;
+
+			}
+		}
+		if(open==1 && close==0){
+			printf("String unterminated at line no %d \n",lineno);
+			strcheck=1;
+		}
+		else if(string==1 && strcheck==0)
+			printf("string at line no %d is validated \n",lineno);
+
+	}
+	return 0;
+}
+
+
+file.txt
+
+#include<stdio.h>
+#include<conio.h>
+int s[35]="gh";
+void main(){
+int a;
+char c[10]="msrit",f[]="lk;
+strlen("hjkl);
+a=a+/*b;
+}
+
+
+2  C program ,Check for un- terminated multi line comment statement 
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+int main(){
+	int lineno=0,comment=0,commentcheck=0,open=0,close=0,openline=0,closeline=0,i;
+	char line[100];
+	FILE *fp;
+	fp=fopen("file2.txt","r");
+	if(fp!=NULL)
+		printf("couldnt open file");
+	printf("file opened correctly");
+	while(fgets(line,sizeof(line),fp)!=NULL){
+		comment=0;
+		lineno++;
+		commentcheck=0;
+		if(open==1 && close==0)
+			printf("\n %s",line);
+		if(strstr(line,"/*")&& open==0){
+			open=1;
+			close=0;
+			comment=1;
+			openline=lineno;
+			printf("%s\n",line );
+		}
+		if(strstr(line,"*/") && open==1 && close==0){
+			closeline=lineno;
+			if(open==1 && close==0){
+			close=1;
+			open=0;
+			
+			printf("comment is displayed above \n opened in lineno %d close in lineno %d \n",openline,closeline);
+			}
+		}
+	}
+	if(open==1 && close==0){
+		printf("unterminated comment in lineno %d it should be closed ",openline);
+		commentcheck=1;
+	}
+	else if(comment==1 && commentcheck==0)
+		printf("comment is validated");
+	return 0;
+}
+
+file2.txt
+#include<stdio.h>
+#include<conio.h>
+/*
+/*
+dfgdfgd
+dfgdfg
+
+int s[35]="gh";
+void main(){
+int a;
+/*
+char c[10]="msrit",f[]="lk;
+*/strlen("hjkl);
+/*dgdfgdfg*/
+a=a+b;
+/*
+fsdgdgds
+sdgfsd
+sdfsdf
+}
+
+3 a) a Lex program , Check for un-terminated string 
+
+%{
+#include<stdio.h>
+int c=0;
+
+%}
+%%
+\n {c++;}
+["][a-zA-Z0-9]*["] {ECHO; printf(" valid string in line %d \n",c+1);}
+["][a-zA-Z0-9]* {ECHO; printf(" invalid string in line %d \n",c+1);}
+. ;
+%%
+main(){
+	yyin=fopen("source.txt","r");
+	yylex();
+	fclose(yyin);
+}
+
+source.txt
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+void main()
+{ int a=1s,b,h;
+a=a+b;
+a=a+/b+h;
+1a=7+j-;
+a=;
+b=b+*;
+}
+
+3 b)a Lex program ,   Check for valid arithmetic expressions 
+
+%{
+#include<stdio.h>
+int c=0;
+%}
+number [0-9]+
+operator [-+/*]
+id [a-zA-Z][a-zA-Z0-9]*
+expression ({id}|{number}){operator}({id}|{number})
+%%
+\n {c++ ;}
+{id}'='({expression}";") {printf("valid expression in line %d ",c+1);ECHO;printf("\n");}
+{id}"="({number}|{id}";") {printf("valid expression in line %d ",c+1);ECHO;printf("\n");}
+({number}|[0-9]*[a-zA-Z-]+)"="{expression}+ {printf("invalid expression in line %d L value not satisfied ",c+1);ECHO;printf("\n");}
+{id}"=;" {printf("R value not satisfied in line no %d ",c+1);ECHO;printf("\n");}
+{operator}{operator}+ {printf("more than one operator in line no %d ",c+1);ECHO;printf("\n");}
+. ;
+%%
+main(){
+	yyin=fopen("source.txt","r");
+	yylex();
+	fclose(yyin);
+}
+
+source.txt
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+void main()
+{ int a=1s,b,h;
+a=a+b;
+a=a+/b+h;
+1a=7+j-;
+a=;
+b=b+*;
+}
+
+4 a) a Lex program to accept , Check for the valid usages of numerical constants 
+
+%{
+	#include<stdio.h>
+	int c=0;
+%}
+number [0-9]+(".")?[0-9]*
+invalid [0-9]+(".")[0-9]*((".")[0-9]*)+
+%%
+\n {c++;}
+{number} {printf("valid number at line no %d",c+1);ECHO;printf("\n");}
+{number}[a-zA-Z0-9_]+ {printf("Invlaid number in line %d, constant can't be followed by alphabet",c+1);ECHO;printf("\n");}
+{invalid} {printf("invalid number at line no %d",c+1);ECHO;printf("\n");}
+. ;
+%%
+main(){
+	yyin=fopen("source4a.txt","r");
+	yylex();
+	fclose(yyin);
+}
+
+source4a.txt
+
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+void main()
+{ int a=56;
+a=1b;
+a=a+5h;
+a=a+4.5+5.6.6;
+}
+
+4 b) a Lex program to accept , Check for the valid declarative statements 
+
+%{
+	#include<stdio.h>
+	int c=0;
+%}
+%s DECLARE VAR
+number [0-9]+[.]?[0-9]*
+identifier [a-zA-Z][a-zA-Z0-9]*
+string ("\"")[a-zA-Z0-9]+("\"")
+%%
+\n {c++;}
+"int "|"float " {BEGIN DECLARE;}
+<DECLARE>{identifier}("="{number}) {BEGIN VAR;}
+<DECLARE>{identifier}("="{string}) {BEGIN VAR; printf("string cant be assigned to integer lineno %d",c+1);ECHO;printf("\n");}
+<VAR>; {BEGIN 0;}
+<VAR>\n {BEGIN 0; c++;}
+<VAR>{identifier}("="{number})+ {}
+<VAR>{identifier}("="{string}) { printf("string cant be assigned to integer lineno %d",c+1);ECHO;printf("\n");}
+<VAR>[,] {BEGIN DECLARE;}
+<VAR>[,][,]+ {printf("invalid declaration more than one comma in lineno %d ",c+1);ECHO;printf("\n");}
+. ;
+%%
+main(){
+	yyin=fopen("source4b.txt","r");
+	yylex();
+	fclose(yyin);
+}
+
+source4b.txt
+
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+void main()
+{ int a,b=78,g="78",,;
+float c=5.6,h="fg";
+sa=5;
+a=a+b;
+printf("\n ");
+}
+
+ 5 a) Lex program,for the valid if statement 
+ 
+ %{
+#include<stdio.h>
+int c=0,bc=0,fc=0;
+%}
+%s IF OP CP OF
+%%
+\n {c++;}
+"if" {BEGIN IF;bc=0;}
+<IF>"(" {BEGIN OP;ECHO;bc++;}
+<IF>")" {BEGIN CP;ECHO;bc--;}
+<OP>")" {BEGIN CP;ECHO;bc--;}
+<OP>"(" {ECHO; bc++;}
+<OP>. {ECHO;}
+<CP>"{" {BEGIN OF;ECHO; if(bc==0) {printf("VALID in line no %d",c);} else printf("invalid in line no %d",c);fc++;printf("\n");}
+<CP>"(" {BEGIN OP;ECHO;bc++;}
+<CP>")" {ECHO;bc--;}
+<CP>. {ECHO;}
+<OF>"}" {fc--;ECHO;if(fc==0) BEGIN 0;}
+<OF>. {ECHO;}
+. ;
+%%
+main(){
+	yyin=fopen("source5a.txt","r");
+	yylex();
+	fclose(yyin);
+}
+
+source5a.txt
+
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+void main()
+{ int a,b=78;
+if((a<5&&j<9)
+{ a=a+h;
+g=6+7;
+a=a+b;
+if(b>n){
+	}
+printf("\n ");
+} if(a<n)
+{ h=j+k;
+} if(a<n))
+{ g=h+k;
+}}
+
+ 5 a) Lex program,for un- terminated multi line comment 
+ 
+ %{
+#include<stdio.h>
+int c=0,oc=0;
+%}
+%s COMMENT
+%%
+\n {c++;}
+"/*" {BEGIN COMMENT;ECHO;oc=1;printf("COMMENT BEGINS In line %d\n",c+1);}
+<COMMENT>"*/" {oc=0;BEGIN 0;ECHO;printf("Comment ends in line %d\n",c+1);}
+
+. ;
+%%
+main(){
+	yyin=fopen("source5b.txt","r");
+	yylex();
+	fclose(yyin);
+	if(oc==1)
+	printf("coment is not closed");
+}
+
+source5b.txt
+
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+/*dfddf*/
+void main()
+{ /*vbhfghfgh
+dfhfgh
+fghgfhfg
+fghfh
+*/
+int a,b=78;
+if((a<5&&j<9)
+{ a=a+h;
+g=6+7;
+a=a+b;
+printf("\n ");
+} /*
+if(a<n)
+{ h=j+k;
+} if(a<n))
+{ g=h+k;
+}}
+
+6 a) Yacc program to accept a statement ,Check for valid arithmetic expressions 
+
+6a.l
+
+%{
+#include<stdio.h>
+#include "y.tab.h"
+#include<ctype.h>
+extern int yylval;
+int val;
+%}
+%%
+[a-zA-Z][a-zA-Z0-9]* {printf("enter the value of the variable %s",yytext); scanf("%d",&val);yylval=val;return id;}
+[0-9]+[.]?[0-9]* {yylval=atoi(yytext);return num;}
+\n {return 0;}
+. {return yytext[0];}
+%%
+int yywrap(){
+	return 1;
+}
+
+6a.y
+
+%{
+#include<stdio.h>
+%}
+%token id num
+%%
+stmt: expression 
+expression: '(' expression ')'
+| '(' expression {printf("erros right paranthesis missing\n");}
+| expression '+' expression {printf("plus recognized \n"); $$=$1+$3;printf("sum is %d",$$);}
+| expression '+' {printf("error right operand missing \n");}
+| expression '-' expression {printf("minus recognized \n"); $$=$1-$3;printf("sum is %d",$$);}
+| expression '-' {printf("error right operand missing \n");}
+| expression '/' expression {printf("division recognized \n"); $$=$1/$3;printf("sum is %d",$$);}
+| expression '/' {printf("error right operand missing \n");}
+| expression '*' expression {printf("multiplication recognized \n"); $$=$1*$3;printf("sum is %d",$$);}
+| expression '*' {printf("error right operand missing \n");}
+| expression '%' expression {printf("modulus recognized \n"); $$=$1%$3;printf("sum is %d",$$);}
+| expression '%' {printf("error right operand missing \n");}
+| id
+| num
+;
+%%
+main(){
+	printf("enter an arithmeti expression\n");
+	yyparse();
+}
+yyerror(){
+	printf("invalid arithmetic expression \n");
+	return 1;
+}
+
+7 a) Yacc program to accept a ,Check for valid declarative 
+
+7.l
+
+%{
+#include<stdio.h>
+#include "y.tab.h"
+int yylval;
+%}
+%%
+"int"[ ]+ {return key;}
+"float"[ ]+ {return key;}
+"double"[ ]+ {return key;}
+"char"[ ]+ {return key;}
+"long int"[ ]+ {return key;}
+[a-zA-Z][a-zA-Z0-9]* {return id;}
+[0-9]+ {return num;}
+[;] {return colon;}
+[ \t] ;
+\n {return 0;}
+. {return yytext[0];}
+%%
+int yywrap()
+{
+	return 1;
+}
+
+7.y
+
+%{
+#include<stdio.h>
+%}
+%token id num comma colon key
+%%
+stmt: list;
+list: key list 
+| list ',' list 
+| list ','',' {printf("invalid declaration \n");}
+| list col 
+| id '[' num ']' {printf("valid2\n");}
+| id '[' id ']' {printf("error value can't be string\n");}
+| id '[' {printf("size missing \n");}
+| id '[' num {printf("right bracket missing error \n");}
+| id 
+;
+col: colon
+| colon col {printf("error two semi colons \n");}
+%%
+main(){
+	printf("entr declaration\n");
+	yyparse();
+}
+yyerror(){
+	printf("invalid declaration\n");
+	return 1;
+}
+
+
+8 ) Yacc program ,Check for the valid relational expression 
+
+8.l
+
+%{
+#include<stdio.h>
+#include<ctype.h>
+#include "y.tab.h"
+int c=0;
+extern int yylval;
+int val;
+%}
+%%
+[a-zA-Z][a-zA-Z0-9]* {printf("enter the value of variable %s",yytext); scanf("%d",&val); yylval=val;return id;}
+[0-9]+[.]?[0-9]* {yylval=atoi(yytext); return num;}
+[ \t] ;
+\n {return 0;}
+. {return yytext[0];}
+%%
+int yywrap(){
+	return 1;
+}
+
+8.y
+
+%{
+#include<stdio.h>
+
+%}
+%token id num
+%%
+stmt: expression;
+expression: '(' expression ')'
+| expression '<' expression {printf("less than reog\n"); $$=$1<$3;printf("%d\n",$$);}
+| expression '<' {printf("error missing right operand\n");}
+| expression '>' expression {printf("greater than reog\n"); $$=$1>$3;printf("%d\n",$$);}
+| expression '>' {printf("error missing right operand\n");}
+| expression '<''=' expression {printf("less than or equal reog\n"); $$=($1<=$4);printf("%d\n",$$);}
+| expression '<''=' {printf("error missing right operand\n");}
+| expression '>''=' expression {printf("greater than or equal reog\n"); $$=($1>=$4);printf("%d\n",$$);}
+| expression '>''=' {printf("error missing right operand\n");}
+| expression '!''=' expression {printf("not equal reog\n"); $$=($1!=$4);printf("%d\n",$$);}
+| expression '!''=' {printf("error missing right operand\n");}
+| expression '=''=' expression {printf("equal to  reog\n"); $$=($1==$4);printf("%d\n",$$);}
+| expression '=''=' {printf("error missing right operand\n");}
+| id
+| num
+;
+%%
+main(){
+	printf("enter an expression\n");
+	yyparse();
+
+}
+yyerror(){
+	printf("invalid expression \n");
+	return 1;
+}
+
+9) Yacc program 
+
+9.y
+
+%{
+#include<stdio.h>
+%}
+%token id num
+%%
+stmt: expression;
+expression: '(' expression ')' 
+| expression '&''&' expression {printf("logical and recogn\n"); $$=(($1)&&($4)); printf("%d\n",$$);}
+| expression '&''&' {printf("right operand is missing\n");}
+| expression '|''|' expression {printf("logical or recogn\n"); $$=(($1)||($4)); printf("%d\n",$$);}
+| expression '|''|' {printf("right operand is missing\n");}
+| '!' expression {printf("logical not recogn\n"); $$=!($2); printf("%d\n",$$);}
+| '!' {printf("right operand is missing\n");}
+| expression '<' expression {printf("less than reog\n"); $$=$1<$3;printf("%d\n",$$);}
+| expression '<' {printf("error missing right operand\n");}
+| expression '>' expression {printf("greater than reog\n"); $$=$1>$3;printf("%d\n",$$);}
+| expression '>' {printf("error missing right operand\n");}
+| expression '<''=' expression {printf("less than or equal reog\n"); $$=($1<=$4);printf("%d\n",$$);}
+| expression '<''=' {printf("error missing right operand\n");}
+| expression '>''=' expression {printf("greater than or equal reog\n"); $$=($1>=$4);printf("%d\n",$$);}
+| expression '>''=' {printf("error missing right operand\n");}
+| expression '!''=' expression {printf("not equal reog\n"); $$=($1!=$4);printf("%d\n",$$);}
+| expression '!''=' {printf("error missing right operand\n");}
+| expression '=''=' expression {printf("equal to  reog\n"); $$=($1==$4);printf("%d\n",$$);}
+| expression '=''=' {printf("error missing right operand\n");}
+| num
+| id
+;
+%%
+main(){
+	printf("enter logical expression\n");
+	yyparse();
+}
+yyerror(){
+	printf("invalid expression");
+	return 1;
+}
+
+9.l
+
+%{
+#include<stdio.h>
+#include<ctype.h>
+#include "y.tab.h"
+int c=0;
+extern int yylval;
+int val;
+%}
+%%
+[a-zA-Z][a-zA-Z0-9]* {printf("enter the value of variable %s",yytext); scanf("%d",&val); yylval=val;return id;}
+[0-9]+[.]?[0-9]* {yylval=atoi(yytext); return num;}
+[ \t] ;
+\n {return 0;}
+. {return yytext[0];}
+%%
+int yywrap(){
+	return 1;
+}
+
